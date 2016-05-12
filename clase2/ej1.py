@@ -2,41 +2,23 @@
 # -*- coding: latin-1 -*-
 
 import numpy as np
+import scipy.io.wavfile
+#import matplotlib.pyplot as pyplot
 
 # Definimos una función senoidal simple.
-def ondasimple(t):
-  A = 1.0    # amplitud
-  f = 500.0  # frequencia
-  Phi = 0.0  # fase
-  return A * np.sin(2 * np.pi * f * t + Phi)
+def ondasimple(t, f=440, a=1.0):
+    Phi = 0.0  # fase
+    return a * np.sin(2 * np.pi * f * t + Phi)
 
+def onda_sinusoidal(hz, length=1, amplitude=10000, sampling=16000):
+    # Generamos 16000 puntos a 16kHz.
+    ts = np.arange(sampling * length) / float(sampling)
+    return np.array([ondasimple(t, f=hz, a=amplitude) for t in ts ])
 
-def onda_sinusoidal(hz, sampling=16000):
-	# Generamos 16000 puntos a 16kHz.
-	ts = np.arange(hz) / float(sampling)
-
-	return np.array([])
-
-
-
-# Armamos una onda senoidal discretizada.
-mionda = []
-for t in ts:
-  mionda.append(ondasimple(t))
-mionda = np.array(mionda)
-
-
-# Graficamos la onda.
-import matplotlib.pyplot as pyplot
-pyplot.clf()
-pyplot.plot(ts[0:100], mionda[0:100])
-pyplot.savefig('mionda.png')
-
-
-# La guardamos como wav.
-import scipy.io.wavfile
-wavdata = np.array(mionda * 10000.0, dtype=np.int16)
-scipy.io.wavfile.write('mionda.wav', 16000, wavdata)
+def guardar(onda, filename):
+    # La guardamos como wav.
+    with open(filename, "wb") as f:
+        scipy.io.wavfile.write(f, 16000, np.array(onda, dtype=np.int16) )
 
 
 # Ejercicios:
@@ -45,7 +27,20 @@ scipy.io.wavfile.write('mionda.wav', 16000, wavdata)
 #    Fa, Sol, La, Si. Consultar las frecuencias en
 #    http://www.phy.mtu.edu/~suits/notefreqs.html
 #    Tomar como referencia La = 440Hz.
-#
+
+notas = [
+    ("C4", 261.63),
+    ("D4", 293.66),
+    ("E4", 329.63),
+    ("F4", 349.23), 
+    ("G4", 392.00), 
+    ("A4", 440.00), 
+    ("B4", 493.88)
+] 
+
+for (nombre, freq) in notas:
+    guardar(onda_sinusoidal(freq, length=1.0, amplitude=30000), "notas/{}.wav".format(nombre))
+
 # 2. Buscar la frecuencia más aguda y más grave que pueden percibir.
 #
 # 3. Percepcion relativa. Escuchar la diferencia entre dos tonos graves
