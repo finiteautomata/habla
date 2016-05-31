@@ -1,2 +1,4 @@
 clase2/bach.wav
 */notas/*.wav
+*.pyc
+.ipynb_checkpoints
