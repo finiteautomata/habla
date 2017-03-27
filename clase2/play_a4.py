@@ -14,3 +14,4 @@ wave = 10000 * np.sin(2 * np.pi * 440 * samples)
 wav_wave = np.array(wave, dtype=np.int16)
 
 sd.play(wav_wave)
+sd.wait()
